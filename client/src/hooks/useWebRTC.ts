@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import * as socketio from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 import Peer from 'simple-peer';
 
 const useWebRTC = (roomId: string, localStream?: MediaStream) => {
   const [peers, setPeers] = useState<Peer.Instance[]>([]);
-  const socketRef = useRef<socketio.Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const peersRef = useRef<Array<{ peerID: string; peer: Peer.Instance }>>([]);
 
   useEffect(() => {
     if (!localStream) return;
 
-    socketRef.current = socketio.io('http://localhost:8080');
+    socketRef.current = io('http://localhost:8080');
     socketRef.current.emit('join-room', roomId);
 
     socketRef.current.on('user-connected', (userId: string) => {
